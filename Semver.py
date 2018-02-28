@@ -2,8 +2,16 @@ class Semver(object):
 
 
     def __init__(self, major=0, minor=0, patch=0):
+
+        self.semver = [major, minor, patch]
+
+        for semver in self.semver:
+            if not isinstance(semver, int):
+                raise TypeError
+
         if major < 0 or minor < 0 or patch < 0:
-            raise TypeError
+            raise ValueError
+
         self.major = major
         self.minor = minor
         self.patch = patch

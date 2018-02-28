@@ -12,22 +12,21 @@ class SemverMajorTest(unittest.TestCase):
         self.assertEqual(4, self.semver.minor)
         self.assertEqual(2, self.semver.patch)
 
-    def test_マイナスで初期化できないこと(self):
-       with self.assertRaises(TypeError):
-           Semver(-1)
-       with self.assertRaises(TypeError):
-           Semver(1, -4,)
-       with self.assertRaises(TypeError):
-           Semver(1, 4, -2)
-
-
-    def test_整数型以外で初期化できないこと(self):
+    def test_整数型以外で初期化するとTypeErrorが返ってくること(self):
        with self.assertRaises(TypeError):
            Semver('1')
        with self.assertRaises(TypeError):
            Semver(1, '4')
        with self.assertRaises(TypeError):
            Semver(1, 4, '2')
+
+    def test_マイナスで初期化するとValueErrorが返ってくること(self):
+       with self.assertRaises(ValueError):
+           Semver(-1)
+       with self.assertRaises(ValueError):
+           Semver(1, -4,)
+       with self.assertRaises(ValueError):
+           Semver(1, 4, -2)
 
     def test_等価比較ができること(self):
        self.assertTrue(self.semver == Semver(1, 4, 2))
