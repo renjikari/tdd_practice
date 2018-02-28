@@ -20,14 +20,18 @@ class Semver(object):
         return self.semver == [other.major, other.minor, other.patch]
 
     def __le__(self, other):
+        """
         if self.major == other.major:
             if self.minor == other.minor:
                 if self.patch > other.patch:
                     return False
             return self.minor <= other.minor
         return self.major <= other.major
+        """
+        return self.semver <= [other.major, other.minor, other.patch]
 
     def __lt__(self, other):
+        """
         if self.major == other.major:
             if self.minor == other.minor:
                 if self.patch >= other.patch:
@@ -35,4 +39,5 @@ class Semver(object):
                 return True
             return self.minor < other.minor
         return self.major < other.major
-
+        """
+        return self.semver < [other.major, other.minor, other.patch]
