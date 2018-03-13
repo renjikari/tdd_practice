@@ -62,14 +62,13 @@ class SemverEqualTest(InitialSuper):
                 C(src = self.semver, dst = Semver(1, 4, 4), expected=False),
                 ]
 
-
     def test_等価比較ができること(self):
         self.make_candidates()
 
         for c in self.candidates:
             with self.subTest():
                 self.assertEqual(c.src == c.dst, c.expected)
-       
+
     def test_不等価比較ができること(self):
         self.make_candidates()
 
@@ -117,6 +116,21 @@ class SemverStrTest(InitialSuper):
 
     def test_オブジェクトを文字列化できる(self):
         self.assertEqual(str(self.semver), "1.4.2")
+
+
+class SemverVersionUpTest(InitialSuper):
+
+    def test_パッチバージョンアップ(self):
+        self.semver.patch_verup()
+        self.assertEqual(self.semver.patch, 3)
+
+    def test_マイナーバージョンアップ(self):
+        self.semver.minor_verup()
+        self.assertEqual([self.semver.minor, self.semver.patch] , [5,0] )
+
+    def test_メジャーバージョンアップ(self):
+        self.semver.major_verup()
+        self.assertEqual([self.semver.major, self.semver.minor, self.semver.patch] , [2,0,0] )
 
 
 if __name__ == "__main__":

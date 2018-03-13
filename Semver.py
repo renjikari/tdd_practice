@@ -44,3 +44,16 @@ class Semver(object):
 
     def __str__(self):
         return "{0}.{1}.{2}".format(str(self.major), str(self.minor), str(self.patch))
+
+    def patch_verup(self):
+        self.patch += 1
+
+    def minor_verup(self):
+        self.patch = 0
+        self.minor += 1
+
+    def major_verup(self):
+        self.patch = 0
+        self.minor = 0
+        self.major += 1
+
