@@ -41,3 +41,6 @@ class Semver(object):
         return self.major < other.major
         """
         return self.semver < [other.major, other.minor, other.patch]
+
+    def __str__(self):
+        return "{0}.{1}.{2}".format(str(self.major), str(self.minor), str(self.patch))

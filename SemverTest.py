@@ -113,5 +113,11 @@ class SemverCompareTest(InitialSuper):
         self.assertFalse(self.semver > Semver(1,4,2))
 
 
+class SemverStrTest(InitialSuper):
+
+    def test_オブジェクトを文字列化できる(self):
+        self.assertEqual(str(self.semver), "1.4.2")
+
+
 if __name__ == "__main__":
     unittest.main()
