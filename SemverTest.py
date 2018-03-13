@@ -1,11 +1,11 @@
 import unittest
 from Semver import Semver
+from collections import namedtuple
 
 
 class SemverMajorTest(unittest.TestCase):
 
-    def test_プラスで初期化できること(self):
-        self.assertEqual(1, Semver(major=1).major)
+    def test_プラスで初期化できること(self): self.assertEqual(1, Semver(major=1).major)
 
     def test_整数型以外で初期化するとTypeErrorが返ってくること(self):
        with self.assertRaises(TypeError):
@@ -14,6 +14,7 @@ class SemverMajorTest(unittest.TestCase):
     def test_マイナスで初期化するとValueErrorが返ってくること(self):
        with self.assertRaises(ValueError):
            Semver(major = -1)
+
 
 class SemverMinorTest(unittest.TestCase):
 
@@ -43,64 +44,73 @@ class SemverPatchTest(unittest.TestCase):
            Semver(patch = -1)
 
 
-class SemverEqualTest(unittest.TestCase):
+class InitialSuper(unittest.TestCase):
 
     def setUp(self):
         self.semver = Semver(1, 4, 2)
+
+
+class SemverEqualTest(InitialSuper):
+
+    def make_candidates(self):
+        C = namedtuple("C", "src, dst, expected")
+
+        self.candidates = [
+                C(src = self.semver, dst = Semver(1, 4, 2), expected=True),
+                C(src = self.semver, dst = Semver(2, 4, 2), expected=False),
+                C(src = self.semver, dst = Semver(1, 8, 2), expected=False),
+                C(src = self.semver, dst = Semver(1, 4, 4), expected=False),
+                ]
+
 
     def test_等価比較ができること(self):
-       self.assertTrue(self.semver == Semver(1, 4, 2))
-       self.assertFalse(self.semver == Semver(2, 4, 2))
-       self.assertFalse(self.semver == Semver(1, 8, 2))
-       self.assertFalse(self.semver == Semver(1, 4, 4))
+        self.make_candidates()
 
+        for c in self.candidates:
+            with self.subTest():
+                self.assertEqual(c.src == c.dst, c.expected)
+       
     def test_不等価比較ができること(self):
-       self.assertTrue(self.semver != Semver(2, 4, 2))
-       self.assertTrue(self.semver != Semver(1, 8, 2))
-       self.assertTrue(self.semver != Semver(1, 4, 4))
+        self.make_candidates()
 
-class SemverLeTest(unittest.TestCase):
+        for c in self.candidates:
+            with self.subTest():
+                self.assertEqual(c.src != c.dst, not(c.expected))
+       
 
-    def setUp(self):
-        self.semver = Semver(1, 4, 2)
+class SemverCompareTest(InitialSuper):
+
+    def make_candidates(self):
+        C = namedtuple("C", "greater, less, expected")
+
+        self.candidates = [
+                C(greater = self.semver, less = Semver(0, 4, 2), expected= True),
+                C(greater = self.semver, less = Semver(1, 2, 2), expected= True),
+                C(greater = self.semver, less = Semver(1, 4, 0), expected= True),
+
+                C(greater = self.semver, less = Semver(2, 4, 2), expected= False),
+                C(greater = self.semver, less = Semver(1, 8, 2), expected= False),
+                C(greater = self.semver, less = Semver(1, 4, 4), expected= False),
+                ]
+
 
     def test_以上の比較ができること(self):
-       self.assertTrue(self.semver >= Semver(1, 4, 2))
-       self.assertTrue(self.semver >= Semver(0, 4, 2))
-       self.assertTrue(self.semver >= Semver(1, 2, 2))
-       self.assertTrue(self.semver >= Semver(1, 4, 0))
 
-       self.assertFalse(self.semver >= Semver(2, 4, 2))
-       self.assertFalse(self.semver >= Semver(1, 8, 2))
-       self.assertFalse(self.semver >= Semver(1, 4, 4))
-
-    def test_以下の比較ができること(self):
-       self.assertTrue(self.semver <= Semver(1, 4, 2))
-       self.assertTrue(self.semver <= Semver(2, 4, 2))
-       self.assertTrue(self.semver <= Semver(1, 8, 2))
-       self.assertTrue(self.semver <= Semver(1, 4, 4))
-
-       self.assertFalse(self.semver <= Semver(0, 4, 2))
-       self.assertFalse(self.semver <= Semver(1, 2, 2))
-       self.assertFalse(self.semver <= Semver(1, 4, 0))
-
-
-class SemverLtTest(unittest.TestCase):
-
-    def setUp(self):
-        self.semver = Semver(1, 4, 2)
+        self.make_candidates()
+        for c in self.candidates:
+            with self.subTest():
+                self.assertEqual(c.greater >= c.less, c.expected)
 
     def test_より大きいの比較ができること(self):
-       self.assertFalse(self.semver > Semver(1, 4, 2))
-       self.assertTrue(self.semver > Semver(0, 4, 2))
-       self.assertTrue(self.semver > Semver(1, 2, 2))
-       self.assertTrue(self.semver > Semver(1, 4, 0))
 
-    def test_より小さいの比較ができること(self):
-       self.assertFalse(self.semver < Semver(1, 4, 2))
-       self.assertTrue(self.semver < Semver(2, 4, 2))
-       self.assertTrue(self.semver < Semver(1, 8, 2))
-       self.assertTrue(self.semver < Semver(1, 4, 4))
+        self.make_candidates()
+        for c in self.candidates:
+            with self.subTest():
+                self.assertEqual(c.greater > c.less, c.expected)
+
+    def test_以上とより大きいが違うこと(self):
+        self.assertTrue(self.semver >= Semver(1,4,2))
+        self.assertFalse(self.semver > Semver(1,4,2))
 
 
 if __name__ == "__main__":
